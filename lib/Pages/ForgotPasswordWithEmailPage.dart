@@ -1,22 +1,27 @@
+
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
-class SignInWithEmailPage extends StatefulWidget {
+class ForgotPasswordWithEmailPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _SignInWithEmailPageState();
+    return _ForgotPasswordWithEmailPageState();
   }
 }
 
-
-class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
+class _ForgotPasswordWithEmailPageState extends State<ForgotPasswordWithEmailPage> {
 
   String _email;
+
+  String _verificationId;
+
+  String _code;
 
   String _password;
 
@@ -24,6 +29,14 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
     setState(() {
       this._email = text;
+    });
+
+  }
+
+  void _codeOnChanged(String text) {
+
+    setState(() {
+      this._code = text;
     });
 
   }
@@ -36,26 +49,18 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
   }
 
-  void _signIn() async {
+  void _sendEmail(BuildContext context) async {
+
+    print("sendPasswordResetEmail");
 
     try {
-      
-      UserCredential credential = await _auth.signInWithEmailAndPassword(email: this._email, password: this._password);
 
-      User user = credential.user;
+      await _auth.sendPasswordResetEmail(email: this._email);
 
-      print("userInfo:" + user.toString());
-
-      _showAlertDialog(context, user.toString());
-
-    } on FirebaseAuthException catch (exception) {
-
-      print("exception:$exception");
-
-      _showAlertDialog(context, exception.message);
+      _showAlertDialog(context, "Please check your email for the verification code.");
 
     } catch (error) {
-      
+
       _showAlertDialog(context, error.toString());
 
     }
@@ -97,8 +102,8 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
       appBar: AppBar(
 
-        title: Text("Sign In"),
-        
+        title: Text("Forgot Password With Email"),
+
       ),
 
       body: Column(
@@ -107,7 +112,7 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
           Container(
 
-            margin: EdgeInsets.only(left: 24, top: 24, right: 24),
+            margin: EdgeInsets.only(left: 24, right: 24,top: 24),
 
             height: 48.0,
 
@@ -127,27 +132,7 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
           Container(
 
-            margin: EdgeInsets.only(left: 24, top: 12, right: 24),
-
-            height: 48.0,
-
-            child: TextFormField(
-
-              decoration: InputDecoration (
-                
-                hintText: "password"
-                
-              ),
-
-              onChanged: _passwordOnChanged,
-
-            ),
-
-          ),
-
-          Container(
-
-            margin: EdgeInsets.only(left: 24, top: 32, right: 24),
+            margin: EdgeInsets.only(left: 24, right: 24,top: 32),
 
             width: MediaQuery.of(context).size.width - 24 * 2,
 
@@ -155,22 +140,22 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
             child: FlatButton(
             
-              onPressed: _signIn, 
+              onPressed: () => _sendEmail(context), 
               
-              child: Text("Sign In"),
+              child: Text("Send Email"),
               
               color: Colors.blue,
 
             )
-            
-          ),
+
+          )
 
         ],
 
-      ),  
-
+      ),     
+      
     );
-    
+
   }
 
 }

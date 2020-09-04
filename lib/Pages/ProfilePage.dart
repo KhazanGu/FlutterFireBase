@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
 
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _HomePageState();
+    return _ProfilePageState();
   }
 }
 
 
-class _HomePageState extends State<HomePage> {
+class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
 
-      appBar: AppBar(),
+      appBar: AppBar(
 
-      body: Text("home"),
+        title: Text("Profile"),
+        
+      ),
+
+      body: Text("pro"),
 
     );
 

@@ -157,36 +157,64 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
 
         children: [
 
-          TextFormField(
+          Container(
 
-            decoration: InputDecoration (
-              
-              hintText: "email"
-              
+            margin: EdgeInsets.only(left: 24, top: 24, right: 24),
+
+            height: 48.0,
+
+            child: TextFormField(
+
+              decoration: InputDecoration (
+                
+                hintText: "email"
+                
+              ),
+
+              onChanged: _emailOnChanged,
+
             ),
-
-            onChanged: _emailOnChanged,
 
           ),
 
-          TextFormField(
+          Container(
 
-            decoration: InputDecoration (
-              
-              hintText: "password"
-              
+            margin: EdgeInsets.only(left: 24, top: 12, right: 24),
+
+            height: 48.0,
+
+            child: TextFormField(
+
+              decoration: InputDecoration (
+                
+                hintText: "password"
+                
+              ),
+
+              onChanged: _passwordOnChanged,
+
             ),
-
-            onChanged: _passwordOnChanged,
 
           ),
 
-          FlatButton(
+          Container(
+
+            margin: EdgeInsets.only(left: 24, top: 32, right: 24),
+
+            width: MediaQuery.of(context).size.width - 24 * 2,
+
+            height: 48.0,
+
+            child: FlatButton(
             
-            onPressed: () => _signup(context), 
-            
-            child: Text("Sign Up")
-            
+              onPressed: () => _signup(context), 
+              
+              child: Text("Sign Up"),
+              
+              color: Colors.blue,
+
+            )
+
           )
 
         ],
