@@ -34,6 +34,12 @@ class _SignUpAndInPageState extends State<SignUpAndInPage> {
 
     return Scaffold(
 
+      appBar: AppBar(
+
+        title: Text('Sign Up or Sign In'),
+        
+      ),
+
       body: Column(
 
         crossAxisAlignment: CrossAxisAlignment.start,

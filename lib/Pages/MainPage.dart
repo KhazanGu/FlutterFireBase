@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'HomePage.dart';
+import 'MessagePage.dart';
 import 'ProfilePage.dart';
 
 class MainPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class _MainPageState extends State<MainPage> {
 
   int _index = 0;
 
-  final List<Widget> _children = [HomePage(), ProfilePage()];
+  final List<Widget> _children = [HomePage(), MessagePage(), ProfilePage()];
 
   void _tapTab(int index) {
 
@@ -29,7 +30,6 @@ class _MainPageState extends State<MainPage> {
     });
 
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +51,14 @@ class _MainPageState extends State<MainPage> {
             icon: Icon(Icons.home),
 
             title: Text("Home"),
+            
+          ),
+
+          BottomNavigationBarItem(
+            
+            icon: Icon(Icons.message),
+
+            title: Text("Message"),
             
           ),
 

@@ -19,32 +19,10 @@ class _ForgotPasswordWithEmailPageState extends State<ForgotPasswordWithEmailPag
 
   String _email;
 
-  String _verificationId;
-
-  String _code;
-
-  String _password;
-
   void _emailOnChanged(String text) {
 
     setState(() {
       this._email = text;
-    });
-
-  }
-
-  void _codeOnChanged(String text) {
-
-    setState(() {
-      this._code = text;
-    });
-
-  }
-
-  void _passwordOnChanged(String text) {
-    
-    setState(() {
-      this._password = text;
     });
 
   }

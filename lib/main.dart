@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
-import 'Pages/SignUpAndInPage.dart';
 import 'Pages/MainPage.dart';
+import 'Models/UserProvider.dart';
 
 void main() async {
 
@@ -11,7 +13,26 @@ void main() async {
 
   await Firebase.initializeApp();
 
-  runApp(MyApp());
+  runApp(
+
+    MultiProvider(
+
+      providers: [
+
+        ChangeNotifierProvider(
+          
+          create: (context) => UserProvider()
+          
+        ),
+
+      ],
+
+      child: MyApp(),
+      
+    )
+
+  );
+
 }
 
 class MyApp extends StatelessWidget {
