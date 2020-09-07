@@ -156,22 +156,56 @@ class _ProfilePageState extends State<ProfilePage> {
 
   }
 
-  void _updateUserName (UserProvider user){
+
+
+  void _updateUserAvatar(BuildContext context, UserProvider user) {
 
     if (!user.login) {
       
       _login();
 
+      return;
+
+    }
+
+    this._displayPickImageDialog(context);
+
+  }
+
+  void _updateUserName(UserProvider user){
+
+    if (!user.login) {
+      
+      _login();
+
+      return;
+
     }
 
   }
 
-  void _updatePhoneNumber (UserProvider user){
+  void _updatePhoneNumber(UserProvider user){
     
+    if (!user.login) {
+      
+      _login();
+
+      return;
+
+    }
+
   }
 
   void _updateEmail (UserProvider user){
     
+    if (!user.login) {
+      
+      _login();
+
+      return;
+
+    }
+
   }
 
   @override
@@ -194,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             children: [
 
-              FlatButton(onPressed: () => this._displayPickImageDialog(context), child: this._image),              
+              FlatButton(onPressed: () => this._updateUserAvatar(context, user), child: this._image),              
 
               TitleContentItem(title: "User Name", content: user.displayName, onTap: () => this._updateUserName(user),),
 

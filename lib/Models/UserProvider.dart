@@ -6,7 +6,7 @@ class UserProvider with ChangeNotifier {
 
   String avatar = "";
 
-  String displayName = "----";
+  String displayName = "-----";
 
   String phoneNumber = "--- ---- ----";
 
@@ -16,11 +16,11 @@ class UserProvider with ChangeNotifier {
 
   void updateWithUser(User user) {
 
-    displayName = user.displayName;
+    displayName = user.displayName != null ?  user.displayName : "-----";
 
-    phoneNumber = user.phoneNumber;
+    phoneNumber = user.phoneNumber != null ? user.phoneNumber : "--- ---- ----";
 
-    email = user.email;
+    email = user.email != null ? user.email : "------";
 
   }
 

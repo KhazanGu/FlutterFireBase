@@ -1,8 +1,10 @@
 
+import 'package:FlutterFireBase/Models/UserProvider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -64,7 +66,7 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
 
   }
 
-  void _signup(BuildContext context) async {
+  void _signup(BuildContext context, UserProvider userProvider) async {
 
     try {
 
@@ -72,6 +74,8 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
 
       final User user = credential.user;
 
+      userProvider.updateWithUser(user);
+      
       _addUserInDataBase(context, user);
 
     } on FirebaseAuthException catch (exception) {
@@ -145,83 +149,93 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
 
-    return Scaffold(
+    return Consumer<UserProvider>(
+      
+      builder: (context, user, child) {
 
-      appBar: AppBar(
+        return Scaffold(
 
-        title: Text("Sign up with email"),
+          appBar: AppBar(
 
-      ),
-
-      body: Column(
-
-        children: [
-
-          Container(
-
-            margin: EdgeInsets.only(left: 24, top: 24, right: 24),
-
-            height: 48.0,
-
-            child: TextFormField(
-
-              decoration: InputDecoration (
-                
-                hintText: "email"
-                
-              ),
-
-              onChanged: _emailOnChanged,
-
-            ),
+            title: Text("Sign up with email"),
 
           ),
 
-          Container(
+          body: Column(
 
-            margin: EdgeInsets.only(left: 24, top: 12, right: 24),
+            children: [
 
-            height: 48.0,
+              Container(
 
-            child: TextFormField(
+                margin: EdgeInsets.only(left: 24, top: 24, right: 24),
 
-              decoration: InputDecoration (
-                
-                hintText: "password"
-                
+                height: 48.0,
+
+                child: TextFormField(
+
+                  decoration: InputDecoration (
+                    
+                    hintText: "email"
+                    
+                  ),
+
+                  onChanged: _emailOnChanged,
+
+                ),
+
               ),
 
-              onChanged: _passwordOnChanged,
+              Container(
 
-            ),
+                margin: EdgeInsets.only(left: 24, top: 12, right: 24),
 
-          ),
+                height: 48.0,
 
-          Container(
+                child: TextFormField(
 
-            margin: EdgeInsets.only(left: 24, top: 32, right: 24),
+                  decoration: InputDecoration (
+                    
+                    hintText: "password"
+                    
+                  ),
 
-            width: MediaQuery.of(context).size.width - 24 * 2,
+                  onChanged: _passwordOnChanged,
 
-            height: 48.0,
+                ),
 
-            child: FlatButton(
-            
-              onPressed: () => _signup(context), 
-              
-              child: Text("Sign Up"),
-              
-              color: Colors.blue,
+              ),
 
-            )
+              Container(
 
-          )
+                margin: EdgeInsets.only(left: 24, top: 32, right: 24),
 
-        ],
+                width: MediaQuery.of(context).size.width - 24 * 2,
 
-      ),     
+                height: 48.0,
+
+                child: FlatButton(
+                
+                  onPressed: () => _signup(context, user), 
+                  
+                  child: Text("Sign Up"),
+                  
+                  color: Colors.blue,
+
+                )
+
+              )
+
+            ],
+
+          ),     
+          
+        );
+
+      }
       
     );
+    
+
 
   }
 
