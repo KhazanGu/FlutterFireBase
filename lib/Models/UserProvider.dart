@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider with ChangeNotifier {
 
-  String avatar = "";
+  String photoURL = "";
 
   String displayName = "-----";
 
@@ -14,14 +14,42 @@ class UserProvider with ChangeNotifier {
 
   bool login = false;
 
-  void updateWithUser(User user) {
+  User user;
 
-    displayName = user.displayName != null ?  user.displayName : "-----";
+  void updateWithUser(User newUser) {
 
-    phoneNumber = user.phoneNumber != null ? user.phoneNumber : "--- ---- ----";
+    user = newUser;
 
-    email = user.email != null ? user.email : "------";
+    login = true;
 
+    displayName = newUser.displayName != null ?  newUser.displayName : "-----";
+
+    phoneNumber = newUser.phoneNumber != null ? newUser.phoneNumber : "--- ---- ----";
+
+    email = newUser.email != null ? newUser.email : "------";
+
+    notifyListeners();
+
+  }
+
+  Future<void> updateProfile({String displayName, String photoURL}) async {
+
+    try {
+      
+      await user.updateProfile(displayName: displayName, photoURL: photoURL);
+
+      this.displayName = displayName;
+
+      this.photoURL = photoURL;
+
+      return;
+
+    } catch (e) {
+
+      throw e;
+
+    }
+    
   }
 
 }

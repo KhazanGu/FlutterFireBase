@@ -32,8 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Widget image = Image(image: AssetImage('images/Avatar.png'));
 
-  Widget _image = FadeInImage(width: 88, height: 88, image: AssetImage('images/Avatar.png'), placeholder: AssetImage('images/Avatar.png'));
-
+  Widget _image;
 
   void _login () {
 
@@ -128,19 +127,23 @@ class _ProfilePageState extends State<ProfilePage> {
         imageQuality: 1,
       );
 
+      Image image = Image.file(
+          
+        File(pickedFile.path),
+
+        width: 100,
+
+        height: 100,
+
+        fit: BoxFit.cover,
+        
+      );
+
+      
+
       setState(() {
 
-        _image = Image.file(
-          
-          File(pickedFile.path),
-
-          width: 100,
-
-          height: 100,
-
-          fit: BoxFit.cover,
-          
-        );
+        _image = image;
 
       });
 
@@ -228,7 +231,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             children: [
 
-              FlatButton(onPressed: () => this._updateUserAvatar(context, user), child: this._image),              
+              FlatButton(onPressed: () => this._updateUserAvatar(context, user), child: this._image != null ? this._image : FadeInImage.assetNetwork(placeholder: 'images/Avatar.png', image: user.photoURL)),              
 
               TitleContentItem(title: "User Name", content: user.displayName, onTap: () => this._updateUserName(user),),
 
