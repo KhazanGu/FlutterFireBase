@@ -30,9 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   dynamic _pickImageError;
 
-  // Widget image = Image(image: AssetImage('images/Avatar.png'));
-
-  Widget _image;
 
   void _login () {
 
@@ -50,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   }
 
-  void _displayPickImageDialog(BuildContext context) async {
+  void _displayPickImageDialog(BuildContext context, UserProvider user) async {
 
     AlertDialog alertDialog = AlertDialog(
 
@@ -68,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           FlatButton(
             
-            onPressed: () => this._pickerImage(context, ImageSource.camera), 
+            onPressed: () => this._pickerImage(context, ImageSource.camera, user), 
             
             child: Text("Take a Photo")
             
@@ -76,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           FlatButton(
             
-            onPressed: () => this._pickerImage(context, ImageSource.gallery), 
+            onPressed: () => this._pickerImage(context, ImageSource.gallery, user), 
             
             child: Text("Pick Image from gallery")
             
@@ -114,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   }
 
-  void _pickerImage(BuildContext context, ImageSource source) async {
+  void _pickerImage(BuildContext context, ImageSource source, UserProvider user) async {
 
     print("pickerImage");
 
@@ -127,25 +124,13 @@ class _ProfilePageState extends State<ProfilePage> {
         imageQuality: 1,
       );
 
-      Image image = Image.file(
-          
-        File(pickedFile.path),
-
-        width: 100,
-
-        height: 100,
-
-        fit: BoxFit.cover,
-        
-      );
-
-      
+      final imageFile = File(pickedFile.path);
 
       setState(() {
-
-        _image = image;
-
+        this._imageFile = imageFile;
       });
+
+      _uploadImage(context, user, imageFile);
 
     } catch (e) {
 
@@ -156,6 +141,12 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     Navigator.of(context).pop();
+
+  }
+
+  void _uploadImage(BuildContext context, UserProvider user, File imageFile) async {
+
+    user.updateStorage(imageFile);
 
   }
 
@@ -171,7 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     }
 
-    this._displayPickImageDialog(context);
+    this._displayPickImageDialog(context, user);
 
   }
 
@@ -231,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             children: [
 
-              FlatButton(onPressed: () => this._updateUserAvatar(context, user), child: this._image != null ? this._image : FadeInImage.assetNetwork(placeholder: 'images/Avatar.png', image: user.photoURL)),              
+              FlatButton(onPressed: () => this._updateUserAvatar(context, user), child: this._imageFile != null ? Image.file(_imageFile, width: 100, height: 100, fit: BoxFit.fill,) : FadeInImage.assetNetwork(placeholder: 'images/Avatar.png', image: user.photoURL, width: 100, height: 100, fit: BoxFit.fill,)),              
 
               TitleContentItem(title: "User Name", content: user.displayName, onTap: () => this._updateUserName(user),),
 

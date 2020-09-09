@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -13,6 +14,14 @@ void main() async {
 
   await Firebase.initializeApp();
 
+  final FirebaseApp app = await Firebase.initializeApp();
+
+  final FirebaseStorage storage = FirebaseStorage(app: app, storageBucket: 'gs://messages-96f31.appspot.com');
+
+  final UserProvider userProvider = UserProvider(storage: storage);
+
+  userProvider.loadUserData();
+
   runApp(
 
     MultiProvider(
@@ -21,7 +30,7 @@ void main() async {
 
         ChangeNotifierProvider(
           
-          create: (context) => UserProvider()
+          create: (context) => userProvider
           
         ),
 
