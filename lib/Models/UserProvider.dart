@@ -208,4 +208,28 @@ class UserProvider with ChangeNotifier {
     
   }
 
+  void signOut() async {
+
+    _remove("USER_INFO");
+
+    photoURL = "";
+
+    login = false;
+    
+    displayName = "-----";
+
+    phoneNumber = "--- ---- ----";
+
+    email = "------";
+
+    login = false;
+
+    uid = null;
+
+    user = null;
+
+    notifyListeners();
+
+  }
+
 }

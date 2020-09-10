@@ -24,6 +24,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final ImagePicker _picker = ImagePicker();
 
   File _imageFile;
@@ -202,6 +204,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   }
 
+
+  void _signOut(UserProvider user) async {
+  
+    await _auth.signOut();
+
+    user.signOut();
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -229,6 +240,18 @@ class _ProfilePageState extends State<ProfilePage> {
               TitleContentItem(title: "Phone Number", content: user.phoneNumber, onTap: () => this._updatePhoneNumber(user),),
 
               TitleContentItem(title: "Email", content: user.email, onTap: () => this._updateEmail(user),),
+
+              Container(
+
+                margin: EdgeInsets.only(top: 42, left: 24, right: 24),
+
+                width: MediaQuery.of(context).size.width - 24 * 2,
+
+                color: Colors.blue,
+
+                child: FlatButton(onPressed: () => _signOut(user), child: Text("Sign Out")),
+
+              ),
 
             ],
 

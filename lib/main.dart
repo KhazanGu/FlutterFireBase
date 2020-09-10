@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'Pages/MainPage.dart';
 import 'Models/UserProvider.dart';
 
+import 'Service/FBCloudFirestore.dart';
+
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,8 @@ void main() async {
 
   final FirebaseStorage storage = FirebaseStorage(app: app, storageBucket: 'gs://messages-96f31.appspot.com');
 
+  FBCloudFirestore.instance.addLaunchRecord();
+  
   final UserProvider userProvider = UserProvider(storage: storage);
 
   userProvider.loadUserData();
