@@ -22,109 +22,19 @@ class UserProvider with ChangeNotifier {
   String uid;
 
 
-  // Map<String, dynamic> toJson() {
-
-  //   return {
-
-  //     "photoURL": photoURL,
-
-  //     "displayName": displayName,
-
-  //     "phoneNumber": phoneNumber,
-
-  //     "email": email,
-
-  //     "login": isLogin,
-
-  //     "uid": uid,
-      
-  //   };
-
-  // }
-
-
-  // void _fromJson(Map<String, dynamic> json) {
-    
-  //   photoURL = json["photoURL"];
-
-  //   displayName = json["displayName"];
-
-  //   phoneNumber = json["phoneNumber"];
-
-  //   email = json["email"];
-    
-  //   isLogin = json["login"];
-    
-  //   uid = json["uid"];
-
-  // }
-
-
-  // UserProvider.fromJson(Map<String, dynamic> json)
-
-  // :
-
-  // photoURL = json["photoURL"],
-
-  // displayName = json["displayName"],
-
-  // phoneNumber = json["phoneNumber"],
-
-  // email = json["email"],
-  
-  // isLogin = json["login"],
-  
-  // uid = json["uid"];
-
-
-  // Future<Map<String, dynamic>> _read(String key) async {
-
-  //   final prefs = await SharedPreferences.getInstance();
-
-  //   return json.decode(prefs.getString(key));
-
-  // }
-
-  // void _save(String key, value) async {
-
-  //   print("_save");
-
-  //   try {
-      
-  //     final prefs = await SharedPreferences.getInstance();
-
-  //     final bool status = await prefs.setString(key, json.encode(value));
-
-  //     print("_save" + status.toString());
-
-  //   } catch (e) {
-
-  //     print("_save error" + e.toString());
-
-  //   }    
-
-  // }
-
-  // void _remove(String key) async {
-
-  //   final prefs = await SharedPreferences.getInstance();
-
-  //   prefs.remove(key);
-
-  // }
-
-
   void _updateWithUserInfo(Map<String, dynamic> userInfo) {
 
     print("updateWithUserInfo");
 
-    photoURL = userInfo["photoURL"];
+    isLogin = true;
 
-    displayName = userInfo["displayName"];
+    photoURL = userInfo["photoURL"] != null ? userInfo["photoURL"] : "";
 
-    phoneNumber = userInfo["phoneNumber"];
+    displayName = userInfo["displayName"] != null ? userInfo["displayName"] : "-----";
 
-    email = userInfo["email"];
+    phoneNumber = userInfo["phoneNumber"] != null ? userInfo["phoneNumber"] : "--- ---- ----";
+
+    email = userInfo["email"] != null ? userInfo["email"] : "------";
 
     uid = userInfo["uid"];
 
@@ -177,7 +87,9 @@ class UserProvider with ChangeNotifier {
   }
 
   
-  Future<void> updateProfile({String displayName, String photoURL}) async {
+  Future<void> _updateProfile({String displayName, String photoURL}) async {
+
+    print('updateProfile');
 
     try {
 
@@ -209,7 +121,7 @@ class UserProvider with ChangeNotifier {
 
     if (url != null) {
       
-      await updateProfile(displayName: this.displayName, photoURL:url);
+      await _updateProfile(displayName: this.displayName, photoURL:url);
 
     } else {
 
@@ -219,9 +131,13 @@ class UserProvider with ChangeNotifier {
 
   }
 
-  Future<void> signInWithUserInfo(Map<String, dynamic> userInfo) async {
+  Future<void> updateUserName(String userName) async {
 
-    isLogin = true;
+    return _updateProfile(displayName: userName, photoURL:this.photoURL);
+
+  }
+
+  void signInWithUserInfo(Map<String, dynamic> userInfo) async {
 
     _updateWithUserInfo(userInfo);
 
@@ -231,9 +147,12 @@ class UserProvider with ChangeNotifier {
 
   }
 
-  void signOut() async {
 
-    KZSharedPreferences.instance.remove("USER_INFO");
+  Future<void> signOut() async {
+
+    await FBAuthentication.instance.signOut();
+
+    await KZSharedPreferences.instance.remove("USER_INFO");
 
     _clearUserInfo();
 

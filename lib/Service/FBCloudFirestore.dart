@@ -38,7 +38,7 @@ class FBCloudFirestore {
 
   }
 
-  void getLaunchRecord({Function callback(List<Map> datas)}) async {
+  void getLaunchRecord({Function callback(List<Map<String, dynamic>> datas)}) async {
 
     CollectionReference launchs = _firestore.collection("launchs");
 

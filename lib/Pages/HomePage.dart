@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../Service/FBCloudFirestore.dart';
+import '../Components/TitleContentItem.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -23,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
     FBCloudFirestore.instance.getLaunchRecord(
       
-      callback: (List<Map> data) {
+      callback: (List<Map<String, dynamic>> data) {
 
         setState(() {
 
@@ -42,11 +44,15 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement build
     return Scaffold(
 
-      appBar: AppBar(),
+      appBar: AppBar(
 
-      body: Column(
+        title: Text("Launch records"),
 
-        children: _records.map((e) => Text(e.toString())).toList()
+      ),
+
+      body: ListView(
+
+        children: _records.map((e) => TitleContentItem(title: DateTime.fromMillisecondsSinceEpoch(e["time"]).toString(), content: e["platform"],)).toList()
 
       ),
 

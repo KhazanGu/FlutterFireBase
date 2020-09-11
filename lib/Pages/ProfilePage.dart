@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../Models/UserProvider.dart';
 import '../Components/TitleContentItem.dart';
 import '../Pages/SignUpAndInPage.dart';
+import '../Pages/UserNameEditPage.dart';
 
 typedef void OnPickImageCallback(double maxWidth, double maxHeight, int quality);
 
@@ -24,7 +24,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -51,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _displayPickImageDialog(BuildContext context, UserProvider user) async {
 
-    AlertDialog alertDialog = AlertDialog(
+    CupertinoAlertDialog alertDialog = CupertinoAlertDialog(
 
       title: Text(
         
@@ -178,6 +177,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
     }
 
+    Navigator.of(context).push(
+
+      MaterialPageRoute<void>(builder: (_) => UserNameEditPage()),
+
+    );    
+
   }
 
   void _updatePhoneNumber(UserProvider user){
@@ -207,8 +212,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _signOut(UserProvider user) async {
   
-    await _auth.signOut();
-
     user.signOut();
     
   }
@@ -233,13 +236,32 @@ class _ProfilePageState extends State<ProfilePage> {
 
             children: [
 
-              FlatButton(onPressed: () => this._updateUserAvatar(context, user), child: this._imageFile != null ? Image.file(_imageFile, width: 100, height: 100, fit: BoxFit.fill,) : FadeInImage.assetNetwork(placeholder: 'images/Avatar.png', image: user.photoURL, width: 100, height: 100, fit: BoxFit.fill,)),              
+              Container(
+
+                margin: EdgeInsets.only(top: 0, left: 0, right: 0),
+
+                height: 200,
+
+                child: FlatButton(
+                  
+                  onPressed: () => this._updateUserAvatar(context, user), 
+                  
+                  child: this._imageFile != null ? Image.file(_imageFile, width: 100, height: 100, fit: BoxFit.fill,) : FadeInImage.assetNetwork(placeholder: 'images/Avatar.png', image: user.photoURL, width: 100, height: 100, fit: BoxFit.fill,)
+                                    
+                ),
+
+              ),              
 
               TitleContentItem(title: "User Name", content: user.displayName, onTap: () => this._updateUserName(user),),
 
               TitleContentItem(title: "Phone Number", content: user.phoneNumber, onTap: () => this._updatePhoneNumber(user),),
 
               TitleContentItem(title: "Email", content: user.email, onTap: () => this._updateEmail(user),),
+
+
+              user.isLogin
+              
+              ?
 
               Container(
 
@@ -251,7 +273,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 child: FlatButton(onPressed: () => _signOut(user), child: Text("Sign Out")),
 
-              ),
+              )
+
+              :
+
+              Container(),
 
             ],
 

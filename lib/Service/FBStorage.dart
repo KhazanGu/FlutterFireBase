@@ -11,7 +11,7 @@ class FBStorage {
   static FBStorage get instance => _instance;
 
 
-  FirebaseStorage _storage;
+  FirebaseStorage _storage = FirebaseStorage.instance;
   
 
   Future<String> uploadImage(File image, String path, String name) async {

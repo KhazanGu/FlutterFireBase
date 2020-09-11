@@ -13,6 +13,7 @@ class FBAuthentication {
   
   String _verificationId;
 
+
   Future<Map<String, dynamic>> creatUserWithEmail(String email, String password) async {
 
     try {
@@ -51,6 +52,12 @@ class FBAuthentication {
       throw error;
 
     }
+
+  }
+
+  Future<void> signOut() {
+
+    return _auth.signOut();
 
   }
 
