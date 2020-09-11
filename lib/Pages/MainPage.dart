@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'MessagePage.dart';
 import 'ProfilePage.dart';
+import 'MapPage.dart';
 
 class MainPage extends StatefulWidget {
 
@@ -19,7 +20,7 @@ class _MainPageState extends State<MainPage> {
 
   int _index = 0;
 
-  final List<Widget> _children = [HomePage(), MessagePage(), ProfilePage()];
+  final List<Widget> _children = [HomePage(), MapPage(), ProfilePage()];
 
   void _tapTab(int index) {
 
@@ -56,9 +57,9 @@ class _MainPageState extends State<MainPage> {
 
           BottomNavigationBarItem(
             
-            icon: Icon(Icons.message),
+            icon: Icon(Icons.map),
 
-            title: Text("Message"),
+            title: Text("Map"),
             
           ),
 
