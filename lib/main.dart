@@ -18,11 +18,11 @@ void main() async {
 
   final FirebaseApp app = await Firebase.initializeApp();
 
-  final FirebaseStorage storage = FirebaseStorage(app: app, storageBucket: 'gs://messages-96f31.appspot.com');
+  FirebaseStorage(app: app, storageBucket: 'gs://messages-96f31.appspot.com');
 
   FBCloudFirestore.instance.addLaunchRecord();
-  
-  final UserProvider userProvider = UserProvider(storage: storage);
+
+  final UserProvider userProvider = UserProvider();
 
   userProvider.loadUserData();
 

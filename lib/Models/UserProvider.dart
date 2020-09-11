@@ -1,10 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../Service/FBAuthentication.dart';
+import '../Service/FBStorage.dart';
+import '../Service/KZSharedPreferences.dart';
 
 class UserProvider with ChangeNotifier {
 
@@ -16,25 +17,138 @@ class UserProvider with ChangeNotifier {
 
   String email = "------";
 
-  bool login = false;
+  bool isLogin = false;
 
   String uid;
 
-  User user;
 
-  FirebaseStorage storage;
+  // Map<String, dynamic> toJson() {
+
+  //   return {
+
+  //     "photoURL": photoURL,
+
+  //     "displayName": displayName,
+
+  //     "phoneNumber": phoneNumber,
+
+  //     "email": email,
+
+  //     "login": isLogin,
+
+  //     "uid": uid,
+      
+  //   };
+
+  // }
 
 
-  UserProvider(
-    {
-      this.storage,
-    }
-  );
+  // void _fromJson(Map<String, dynamic> json) {
+    
+  //   photoURL = json["photoURL"];
+
+  //   displayName = json["displayName"];
+
+  //   phoneNumber = json["phoneNumber"];
+
+  //   email = json["email"];
+    
+  //   isLogin = json["login"];
+    
+  //   uid = json["uid"];
+
+  // }
 
 
-  Map<String, dynamic> toJson() {
+  // UserProvider.fromJson(Map<String, dynamic> json)
 
-    return {
+  // :
+
+  // photoURL = json["photoURL"],
+
+  // displayName = json["displayName"],
+
+  // phoneNumber = json["phoneNumber"],
+
+  // email = json["email"],
+  
+  // isLogin = json["login"],
+  
+  // uid = json["uid"];
+
+
+  // Future<Map<String, dynamic>> _read(String key) async {
+
+  //   final prefs = await SharedPreferences.getInstance();
+
+  //   return json.decode(prefs.getString(key));
+
+  // }
+
+  // void _save(String key, value) async {
+
+  //   print("_save");
+
+  //   try {
+      
+  //     final prefs = await SharedPreferences.getInstance();
+
+  //     final bool status = await prefs.setString(key, json.encode(value));
+
+  //     print("_save" + status.toString());
+
+  //   } catch (e) {
+
+  //     print("_save error" + e.toString());
+
+  //   }    
+
+  // }
+
+  // void _remove(String key) async {
+
+  //   final prefs = await SharedPreferences.getInstance();
+
+  //   prefs.remove(key);
+
+  // }
+
+
+  void _updateWithUserInfo(Map<String, dynamic> userInfo) {
+
+    print("updateWithUserInfo");
+
+    photoURL = userInfo["photoURL"];
+
+    displayName = userInfo["displayName"];
+
+    phoneNumber = userInfo["phoneNumber"];
+
+    email = userInfo["email"];
+
+    uid = userInfo["uid"];
+
+  }
+
+  void _clearUserInfo() {
+
+    isLogin = false;
+
+    photoURL = "";
+    
+    displayName = "-----";
+
+    phoneNumber = "--- ---- ----";
+
+    email = "------";
+
+    uid = null;
+
+  }
+
+  Future<bool> _sync() async {
+
+    Map<String, dynamic> userInfo = {
 
       "photoURL": photoURL,
 
@@ -44,155 +158,36 @@ class UserProvider with ChangeNotifier {
 
       "email": email,
 
-      "login": login,
+      "login": isLogin,
 
       "uid": uid,
       
     };
 
-  }
-
-
-  void _fromJson(Map<String, dynamic> json) {
-    
-    photoURL = json["photoURL"];
-
-    displayName = json["displayName"];
-
-    phoneNumber = json["phoneNumber"];
-
-    email = json["email"];
-    
-    login = json["login"];
-    
-    uid = json["uid"];
+    return KZSharedPreferences.instance.jsonSave("USER_INFO", userInfo);
 
   }
-
-
-  UserProvider.fromJson(Map<String, dynamic> json)
-
-  :
-
-  photoURL = json["photoURL"],
-
-  displayName = json["displayName"],
-
-  phoneNumber = json["phoneNumber"],
-
-  email = json["email"],
-  
-  login = json["login"],
-  
-  uid = json["uid"];
-
-
-  Future<Map<String, dynamic>> _read(String key) async {
-
-    final prefs = await SharedPreferences.getInstance();
-
-    return json.decode(prefs.getString(key));
-
-  }
-
-  void _save(String key, value) async {
-
-    print("_save");
-
-    try {
-      
-      final prefs = await SharedPreferences.getInstance();
-
-      final bool status = await prefs.setString(key, json.encode(value));
-
-      print("_save" + status.toString());
-
-    } catch (e) {
-
-      print("_save error" + e.toString());
-
-    }    
-
-  }
-
-  void _remove(String key) async {
-
-    final prefs = await SharedPreferences.getInstance();
-
-    prefs.remove(key);
-
-  }
-
 
   void loadUserData() async {
 
-    Map<String, dynamic> info = await _read("USER_INFO");
-    
-    _fromJson(info);
+    Map<String, dynamic> userInfo = await KZSharedPreferences.instance.jsonRead("USER_INFO");
+
+    _updateWithUserInfo(userInfo);
 
   }
 
-
-  void updateWithUser(User newUser) {
-
-    print("updateWithUser");
-
-    user = newUser;
-
-    login = true;
-
-    photoURL = newUser.photoURL != null ?  newUser.photoURL : "";
-
-    displayName = newUser.displayName != null ?  newUser.displayName : "-----";
-
-    phoneNumber = newUser.phoneNumber != null ? newUser.phoneNumber : "--- ---- ----";
-
-    email = newUser.email != null ? newUser.email : "------";
-
-    uid = newUser.uid;
-
-    _save("USER_INFO", this.toJson());
-
-    notifyListeners();
-
-  }
-
-
-  void updateStorage(File file) async {
-
-    final StorageReference storageReference = storage.ref().child('user').child(user.uid);
-
-    final StorageUploadTask uploadTask = storageReference.putFile(file);
-
-    StorageTaskSnapshot snapshot = await uploadTask.onComplete;
-
-    var url = await storageReference.getDownloadURL() as String;
-
-    print("snapshot" + url);
-
-    try {
-      
-      await updateProfile(displayName: this.displayName, photoURL:url);
-
-    } catch (e) {
-
-      print('updateProfile error' + e.toString());
-
-    }
-
-  }
-
+  
   Future<void> updateProfile({String displayName, String photoURL}) async {
 
     try {
-      
-      await user.updateProfile(displayName: displayName, photoURL: photoURL);
+
+      await FBAuthentication.instance.updateProfile(displayName: displayName, photoURL: photoURL);
 
       this.displayName = displayName;
 
       this.photoURL = photoURL;
 
-      _save("USER_INFO", this.user);
+      _sync();
 
       notifyListeners();
 
@@ -208,25 +203,39 @@ class UserProvider with ChangeNotifier {
     
   }
 
+  void updateAvatar(File file) async {
+
+    final String url = await FBStorage.instance.uploadImage(file, 'user', uid);
+
+    if (url != null) {
+      
+      await updateProfile(displayName: this.displayName, photoURL:url);
+
+    } else {
+
+      print('updateProfile error');
+
+    }
+
+  }
+
+  Future<void> signInWithUserInfo(Map<String, dynamic> userInfo) async {
+
+    isLogin = true;
+
+    _updateWithUserInfo(userInfo);
+
+    await _sync();
+
+    notifyListeners();
+
+  }
+
   void signOut() async {
 
-    _remove("USER_INFO");
+    KZSharedPreferences.instance.remove("USER_INFO");
 
-    photoURL = "";
-
-    login = false;
-    
-    displayName = "-----";
-
-    phoneNumber = "--- ---- ----";
-
-    email = "------";
-
-    login = false;
-
-    uid = null;
-
-    user = null;
+    _clearUserInfo();
 
     notifyListeners();
 

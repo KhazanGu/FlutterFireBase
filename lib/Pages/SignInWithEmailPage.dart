@@ -1,10 +1,8 @@
-import 'package:FlutterFireBase/Models/UserProvider.dart';
 import 'package:flutter/material.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import '../Models/UserProvider.dart';
+import '../Service/FBAuthentication.dart';
 
 class SignInWithEmailPage extends StatefulWidget {
 
@@ -38,31 +36,27 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
   }
 
-  void _signIn(UserProvider userProvider) async {
+  void _signIn(BuildContext context, UserProvider userProvider) async {
 
     try {
-      
-      UserCredential credential = await _auth.signInWithEmailAndPassword(email: this._email, password: this._password);
 
-      User user = credential.user;
+      Map<String, dynamic> userInfo = await FBAuthentication.instance.signInWithEmailAndPassword(this._email, this._password);
 
-      userProvider.updateWithUser(user);
+      userProvider.signInWithUserInfo(userInfo);
 
-      print("userInfo:" + user.toString());
-
-      _showAlertDialog(context, user.toString());
-
-    } on FirebaseAuthException catch (exception) {
-
-      print("exception:$exception");
-
-      _showAlertDialog(context, exception.message);
+      _popToRoot(context);
 
     } catch (error) {
       
       _showAlertDialog(context, error.toString());
 
     }
+
+  }
+
+  void _popToRoot(BuildContext context) {
+
+    Navigator.of(context).popUntil((route) => route.isFirst);
 
   }
 
@@ -163,7 +157,7 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
 
                 child: FlatButton(
                 
-                  onPressed: () => _signIn(user), 
+                  onPressed: () => _signIn(context, user), 
                   
                   child: Text("Sign In"),
                   
@@ -182,8 +176,6 @@ class _SignInWithEmailPageState extends State<SignInWithEmailPage> {
       }
       
     );
-
-
     
   }
 

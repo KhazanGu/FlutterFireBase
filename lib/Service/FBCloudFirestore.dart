@@ -4,15 +4,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FBCloudFirestore {
 
+  FBCloudFirestore._privateConstructor();
+
+  static final FBCloudFirestore _instance = FBCloudFirestore._privateConstructor();
+
+  static FBCloudFirestore get instance => _instance;
+
+
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
-  static FBCloudFirestore get instance {
-
-    return FBCloudFirestore();
-
-  }
-
+  // ********************* lacunch ********************* //
   void addLaunchRecord() {
 
     CollectionReference launchs = _firestore.collection("launchs");
@@ -37,10 +38,6 @@ class FBCloudFirestore {
 
   }
 
-  void datas(List<Map> datas) {
-
-  }
-
   void getLaunchRecord({Function callback(List<Map> datas)}) async {
 
     CollectionReference launchs = _firestore.collection("launchs");
@@ -61,5 +58,14 @@ class FBCloudFirestore {
   }
 
 
+  // ********************* user ********************* //
+
+  Future<void> addUser(Map<String, dynamic> userInfo) async {
+
+    CollectionReference users = _firestore.collection("users");
+
+    return users.add(userInfo);
+
+  }
 
 }

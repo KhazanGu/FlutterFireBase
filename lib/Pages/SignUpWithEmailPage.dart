@@ -1,12 +1,10 @@
 
-import 'package:FlutterFireBase/Models/UserProvider.dart';
 import 'package:flutter/material.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import '../Models/UserProvider.dart';
+import '../Service/FBAuthentication.dart';
+import '../Service/FBCloudFirestore.dart';
 
 class SignUpWithEmailPage extends StatefulWidget {
 
@@ -24,26 +22,6 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
   String _password;
 
 
-  void _query() async {
-
-      CollectionReference users = FirebaseFirestore.instance.collection("users");
-
-      QuerySnapshot query = await users.get();
-
-      List<QueryDocumentSnapshot> docs = query.docs;
-
-      print("docs:$docs");
-
-      docs.forEach((element) {
-        
-        print("element_id:" + element.id);
-
-        print("element_data:" + element.data().toString());
-
-      });
-      
-  }
-
   void _emailOnChanged(String text) {
 
     setState(() {
@@ -60,29 +38,18 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
 
   }
 
-  void _popPage(BuildContext context) {
-
-    Navigator.of(context).pop();
-
-  }
 
   void _signup(BuildContext context, UserProvider userProvider) async {
 
     try {
 
-      final UserCredential credential = await _auth.createUserWithEmailAndPassword(email: this._email, password: _password);
+      final Map<String, dynamic> userInfo = await FBAuthentication.instance.creatUserWithEmail(this._email, this._password);
 
-      final User user = credential.user;
+      await FBCloudFirestore.instance.addUser(userInfo);
 
-      userProvider.updateWithUser(user);
-      
-      _addUserInDataBase(context, user);
+      userProvider.signInWithUserInfo(userInfo);
 
-    } on FirebaseAuthException catch (exception) {
-
-      print("exception:$exception");
-
-      _showAlertDialog(context, exception.message);
+      _popToRoot(context);
 
     } catch (error) {
       
@@ -92,29 +59,9 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
 
   }
 
-  void _addUserInDataBase(BuildContext context, User user) async {
+  void _popToRoot(BuildContext context) {
 
-    if (user != null) {
-
-      Map<String, dynamic> userInfo = {
-        "email":user.email,
-        "uid": user.uid,
-      };
-
-      print("user: $userInfo");
-
-      CollectionReference users = FirebaseFirestore.instance.collection("users");
-
-      users
-      .add(userInfo)
-      .then((value) => _popPage(context))
-      .catchError((error) => print("error: $error"));
-
-    } else {
-
-      _showAlertDialog(context, "add to database failed");
-
-    }
+    Navigator.of(context).popUntil((route) => route.isFirst);
 
   }
 
@@ -234,8 +181,6 @@ class _SignUpWithEmailPageState extends State<SignUpWithEmailPage> {
       }
       
     );
-    
-
 
   }
 

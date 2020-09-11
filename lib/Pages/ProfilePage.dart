@@ -148,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _uploadImage(BuildContext context, UserProvider user, File imageFile) async {
 
-    user.updateStorage(imageFile);
+    user.updateAvatar(imageFile);
 
   }
 
@@ -156,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _updateUserAvatar(BuildContext context, UserProvider user) {
 
-    if (!user.login) {
+    if (!user.isLogin) {
       
       _login();
 
@@ -170,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _updateUserName(UserProvider user){
 
-    if (!user.login) {
+    if (!user.isLogin) {
       
       _login();
 
@@ -182,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _updatePhoneNumber(UserProvider user){
     
-    if (!user.login) {
+    if (!user.isLogin) {
       
       _login();
 
@@ -194,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _updateEmail (UserProvider user){
     
-    if (!user.login) {
+    if (!user.isLogin) {
       
       _login();
 

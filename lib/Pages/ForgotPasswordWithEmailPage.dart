@@ -1,10 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import '../Service/FBAuthentication.dart';
 
 class ForgotPasswordWithEmailPage extends StatefulWidget {
 
@@ -33,7 +30,7 @@ class _ForgotPasswordWithEmailPageState extends State<ForgotPasswordWithEmailPag
 
     try {
 
-      await _auth.sendPasswordResetEmail(email: this._email);
+      await FBAuthentication.instance.sendPasswordResetEmail(this._email);
 
       _showAlertDialog(context, "Please check your email for the verification code.");
 
